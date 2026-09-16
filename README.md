@@ -4,6 +4,31 @@ A distributed, event-driven task and queue management engine for running heavy b
 
 Taskly allows applications to create, schedule, and track resource-intensive tasks without blocking the main application flow. Heavy work is delegated to background workers while real-time status updates are delivered to connected clients.
 
+## Local Development
+
+Clone the repository and install all project dependencies:
+```bash
+git clone <repository-url>
+cd Taskly
+npm install
+```
+
+Compile the TypeScript source into JavaScript:
+```bash
+npm run build
+```
+
+Start the compiled application:
+```bash
+npm start
+```
+
+During development, use the development script:
+```bash
+npm run dev
+```
+Store local configuration and credentials in .env. Use .env.example as the reference for required variables. Never commit .env, secrets, credentials, or tokens to the repository. Generated files and dependencies are excluded through .gitignore. PostgreSQL, Redis, and MinIO development services will be configured separately through Docker Compose during the infrastructure setup phase.
+
 ## Features
 
 - Asynchronous background job processing
