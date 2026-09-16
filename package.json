@@ -1,0 +1,28 @@
+{
+  "name": "taskly",
+  "version": "1.0.0",
+  "description": "A distributed, event-driven task and queue management engine for running heavy background jobs asynchronously.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "tsc",
+    "start": "node dist/index,js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fundamentalprinciple/Taskly.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/fundamentalprinciple/Taskly/issues"
+  },
+  "homepage": "https://github.com/fundamentalprinciple/Taskly#readme",
+  "devDependencies": {
+    "@types/node": "^22.20.3",
+    "typescript": "^7.0.2"
+  }
+}
