@@ -1,14 +1,16 @@
 {
   "compilerOptions": {
-	"types": ["node"],
+    "types": ["node"],
     "target": "ES2022",
-    "module": "CommonJS",
+    "module": "preserve",
     "rootDir": "./src",
     "outDir": "./dist",
     "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true
   },
   "include": ["src"]
 }

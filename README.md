@@ -7,6 +7,7 @@ Taskly allows applications to create, schedule, and track resource-intensive tas
 ## Local Development
 
 Clone the repository and install all project dependencies:
+
 ```bash
 git clone <repository-url>
 cd Taskly
@@ -14,19 +15,23 @@ npm install
 ```
 
 Compile the TypeScript source into JavaScript:
+
 ```bash
 npm run build
 ```
 
 Start the compiled application:
+
 ```bash
 npm start
 ```
 
 During development, use the development script:
+
 ```bash
 npm run dev
 ```
+
 Store local configuration and credentials in .env. Use .env.example as the reference for required variables. Never commit .env, secrets, credentials, or tokens to the repository. Generated files and dependencies are excluded through .gitignore. PostgreSQL, Redis, and MinIO development services will be configured separately through Docker Compose during the infrastructure setup phase.
 
 ## Features
@@ -77,19 +82,19 @@ Store local configuration and credentials in .env. Use .env.example as the refer
 
 ## Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Runtime | Node.js |
-| Language | TypeScript |
-| Database | PostgreSQL |
-| ORM | Prisma / Drizzle |
-| Cache & Broker | Redis |
-| Queue | BullMQ |
-| Real-Time | WebSockets / Socket.io |
-| Storage | AWS S3 / MinIO |
-| Authentication | JWT |
-| Reverse Proxy | Nginx |
-| Infrastructure | Docker |
+| Layer          | Technology             |
+| -------------- | ---------------------- |
+| Runtime        | Node.js                |
+| Language       | TypeScript             |
+| Database       | PostgreSQL             |
+| ORM            | Prisma / Drizzle       |
+| Cache & Broker | Redis                  |
+| Queue          | BullMQ                 |
+| Real-Time      | WebSockets / Socket.io |
+| Storage        | AWS S3 / MinIO         |
+| Authentication | JWT                    |
+| Reverse Proxy  | Nginx                  |
+| Infrastructure | Docker                 |
 
 ## Core Modules
 
