@@ -2,14 +2,14 @@
   "compilerOptions": {
     "types": ["node"],
     "target": "ES2022",
-    "module": "preserve",
+    "module": "NodeNext",
     "rootDir": "./src",
     "outDir": "./dist",
     "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "moduleResolution": "bundler",
+    "moduleResolution": "NodeNext",
     "resolveJsonModule": true
   },
   "include": ["src"]
