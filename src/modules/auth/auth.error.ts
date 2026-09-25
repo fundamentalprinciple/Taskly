@@ -4,3 +4,10 @@ export class AuthenticationError extends Error {
     this.name = 'AuthenticationError';
   }
 }
+
+export class RefreshTokenError extends Error {
+	constructor(message = 'Invalid or expired refresh token') {
+		super(message);
+		this.name = 'RefreshTokenError';
+	}
+}
