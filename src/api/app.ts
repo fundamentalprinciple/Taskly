@@ -1,16 +1,21 @@
 import express from "express";
-import authRoutes from './auth.routes.js';
-import { errorHandler } from './error.middleware.js';
-import cookieParser from 'cookie-parser'
+import { errorHandler } from "./error.middleware.js";
+import cookieParser from "cookie-parser";
+import v1Router from "./v1/index.js";
+import { requestLogger } from "../middleware/request-logger.js";
+import { requestId } from "../middleware/request-id.js";
 
 const app = express();
 
+app.use(requestId);
+app.use(requestLogger);
 app.use(express.json());
 app.use(cookieParser());
-app.use('/api/auth', authRoutes);
+app.use(requestLogger);
+app.use("/api/v1", v1Router);
 app.use(errorHandler);
-app.get('/health', (_req, res) => {
-	res.json({ status: 'ok' });
+app.get("/health", (_req, res) => {
+  res.json({ status: "ok" });
 });
 
 export default app;
