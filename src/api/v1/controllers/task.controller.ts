@@ -6,10 +6,26 @@ import { updateTask } from "../../../modules/tasks/task.service.js";
 import { deleteTask } from "../../../modules/tasks/task.service.js";
 import { updateTaskStatus } from "../../../modules/tasks/task.service.js";
 import { InvalidTaskTransitionError } from "../../../modules/tasks/task.service.js";
+import { taskQueue } from "../../../queue/task.queue.js";
 
 export async function createTaskController(req: Request, res: Response) {
   const userId = (req as AuthenticatedRequest).user.sub;
   const task = await createTask(userId, req.body);
+
+  await taskQueue.add(
+    "process-task",
+    {
+      taskId: task.id,
+      userId,
+    },
+    {
+      attempts: 3,
+      backoff: {
+        type: "exponential",
+        delay: 1000,
+      },
+    },
+  );
 
   res.status(201).json({
     success: true,
