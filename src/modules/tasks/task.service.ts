@@ -87,7 +87,7 @@ export async function updateTaskStatus(
   if (!task) {
     return null;
   }
-
+  if (task.status === nextStatus) return task;
   if (!canTransition(task.status, nextStatus)) {
     throw new InvalidTaskTransitionError(task.status, nextStatus);
   }
