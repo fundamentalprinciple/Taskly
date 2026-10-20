@@ -77,6 +77,13 @@
                   "kind": "scalar"
                 }
               },
+              "executionDuration": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
               "executionTime": {
                 "nullable": false,
                 "type": {
@@ -124,6 +131,9 @@
                 },
                 "createdAt": {
                   "column": "createdAt"
+                },
+                "executionDuration": {
+                  "column": "executionDuration"
                 },
                 "executionTime": {
                   "column": "executionTime"
@@ -469,6 +479,11 @@
                   "nativeType": "timestamptz",
                   "nullable": false
                 },
+                "executionDuration": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": true
+                },
                 "executionTime": {
                   "codecId": "pg/timestamptz-temporal@1",
                   "nativeType": "timestamptz",
@@ -796,7 +811,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "5d7d8422985ee4655594cedb74b6478bdfdfbfd655b6e0489a302a48b35ceb7b"
+    "storageHash": "b1b49266750a30e0e51b6ea9fbd2150d070ce7005156a24290349e6087636e72"
   },
   "execution": {
     "executionHash": "a92a75c8cccb6ffdd9df420653331f96ba144b383203d67f0701f840426d416e",

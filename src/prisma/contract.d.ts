@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'5d7d8422985ee4655594cedb74b6478bdfdfbfd655b6e0489a302a48b35ceb7b'>;
+  StorageHashBase<'b1b49266750a30e0e51b6ea9fbd2150d070ce7005156a24290349e6087636e72'>;
 export type ExecutionHash =
   ExecutionHashBase<'a92a75c8cccb6ffdd9df420653331f96ba144b383203d67f0701f840426d416e'>;
 export type ProfileHash =
@@ -247,6 +247,7 @@ export type FieldOutputTypes = {
       readonly taskId: CodecTypes['pg/uuid@1']['output'];
       readonly attemptNumber: CodecTypes['pg/int4@1']['output'];
       readonly executionTime: CodecTypes['pg/timestamptz-temporal@1']['output'];
+      readonly executionDuration: CodecTypes['pg/int4@1']['output'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
     };
     readonly RefreshToken: {
@@ -282,6 +283,7 @@ export type FieldInputTypes = {
       readonly taskId: CodecTypes['pg/uuid@1']['input'];
       readonly attemptNumber: CodecTypes['pg/int4@1']['input'];
       readonly executionTime: CodecTypes['pg/timestamptz-temporal@1']['input'];
+      readonly executionDuration: CodecTypes['pg/int4@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
     };
     readonly RefreshToken: {
@@ -315,6 +317,7 @@ export type StorageColumnTypes = {
     readonly jobAuditLog: {
       readonly attemptNumber: CodecTypes['pg/int4@1']['output'];
       readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+      readonly executionDuration: CodecTypes['pg/int4@1']['output'] | null;
       readonly executionTime: CodecTypes['pg/timestamptz-temporal@1']['output'];
       readonly id: CodecTypes['pg/uuid@1']['output'];
       readonly taskId: CodecTypes['pg/uuid@1']['output'];
@@ -350,6 +353,7 @@ export type StorageColumnInputTypes = {
     readonly jobAuditLog: {
       readonly attemptNumber: CodecTypes['pg/int4@1']['input'];
       readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
+      readonly executionDuration: CodecTypes['pg/int4@1']['input'] | null;
       readonly executionTime: CodecTypes['pg/timestamptz-temporal@1']['input'];
       readonly id: CodecTypes['pg/uuid@1']['input'];
       readonly taskId: CodecTypes['pg/uuid@1']['input'];
@@ -419,6 +423,7 @@ export namespace Models {
     taskId: CodecTypes['pg/uuid@1']['output'];
     attemptNumber: CodecTypes['pg/int4@1']['output'];
     executionTime: CodecTypes['pg/timestamptz-temporal@1']['output'];
+    executionDuration: CodecTypes['pg/int4@1']['output'] | null;
     createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
     task: public_Task;
     readonly [RelationKeys]?: 'task';
@@ -473,6 +478,11 @@ type ContractBase = Omit<
                   readonly nativeType: 'timestamptz';
                   readonly codecId: 'pg/timestamptz-temporal@1';
                   readonly nullable: false;
+                };
+                readonly executionDuration: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: true;
                 };
                 readonly createdAt: {
                   readonly nativeType: 'timestamptz';
@@ -736,6 +746,10 @@ type ContractBase = Omit<
                   readonly codecId: 'pg/timestamptz-temporal@1';
                 };
               };
+              readonly executionDuration: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
               readonly createdAt: {
                 readonly nullable: false;
                 readonly type: {
@@ -763,6 +777,7 @@ type ContractBase = Omit<
                 readonly taskId: { readonly column: 'taskId' };
                 readonly attemptNumber: { readonly column: 'attemptNumber' };
                 readonly executionTime: { readonly column: 'executionTime' };
+                readonly executionDuration: { readonly column: 'executionDuration' };
                 readonly createdAt: { readonly column: 'createdAt' };
               };
             };

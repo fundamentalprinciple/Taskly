@@ -1,0 +1,44 @@
+[
+  {
+    "id": "column.public.jobAuditLog.executionDuration",
+    "label": "Add column \"executionDuration\" to \"jobAuditLog\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "executionDuration",
+        "table": "jobAuditLog"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"executionDuration\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "jobAuditLog",
+          "executionDuration"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"executionDuration\"",
+        "sql": "ALTER TABLE \"public\".\"jobAuditLog\" ADD COLUMN \"executionDuration\" int4"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"executionDuration\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "jobAuditLog",
+          "executionDuration"
+        ]
+      }
+    ]
+  }
+]
