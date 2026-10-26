@@ -100,3 +100,25 @@ export async function updateTaskStatus(
     updatedAt: Temporal.Now.instant(),
   });
 }
+
+export async function getTasksForExport(
+  userId: string,
+  filters: Record<string, string | number | boolean> = {},
+) {
+  const tasks = await db.orm.public.Task.where({ userId }).all();
+
+  return tasks.filter((task) =>
+    Object.entries(filters).every(([key, value]) => {
+      if (key === "status") return task.status === value;
+      return true;
+    }),
+  );
+}
+
+export async function updateTaskPayload(
+  taskId: string,
+  userId: string,
+  payload: { [key: string]: JsonValue },
+) {
+  return updateTask(taskId, userId, payload);
+}

@@ -1,0 +1,86 @@
+[
+  {
+    "id": "column.public.jobAuditLog.exportFilePath",
+    "label": "Add column \"exportFilePath\" to \"jobAuditLog\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "exportFilePath",
+        "table": "jobAuditLog"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"exportFilePath\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "jobAuditLog",
+          "exportFilePath"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"exportFilePath\"",
+        "sql": "ALTER TABLE \"public\".\"jobAuditLog\" ADD COLUMN \"exportFilePath\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"exportFilePath\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "jobAuditLog",
+          "exportFilePath"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.jobAuditLog.exportRowCount",
+    "label": "Add column \"exportRowCount\" to \"jobAuditLog\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "exportRowCount",
+        "table": "jobAuditLog"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"exportRowCount\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "jobAuditLog",
+          "exportRowCount"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"exportRowCount\"",
+        "sql": "ALTER TABLE \"public\".\"jobAuditLog\" ADD COLUMN \"exportRowCount\" int4"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"exportRowCount\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "jobAuditLog",
+          "exportRowCount"
+        ]
+      }
+    ]
+  }
+]

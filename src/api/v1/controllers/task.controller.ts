@@ -7,6 +7,7 @@ import { deleteTask } from "../../../modules/tasks/task.service.js";
 import { updateTaskStatus } from "../../../modules/tasks/task.service.js";
 import { InvalidTaskTransitionError } from "../../../modules/tasks/task.service.js";
 import { taskQueue } from "../../../queue/task.queue.js";
+import { exportQueue } from "../../../queue/task.queue.js";
 
 export async function createTaskController(req: Request, res: Response) {
   const userId = (req as AuthenticatedRequest).user.sub;
@@ -131,6 +132,84 @@ export async function updateTaskStatusController(req: Request, res: Response) {
       res.status(409).json({ error: error.message });
       return;
     }
+    throw error;
+  }
+}
+
+export async function exportTasksController(req: Request, res: Response) {
+  const userId = (req as AuthenticatedRequest).user.sub;
+  const body = req.body as {
+    format?: unknown;
+    filters?: unknown;
+  };
+
+  if (body.format !== "csv") {
+    res.status(400).json({
+      success: false,
+      error: "format must be 'csv'",
+    });
+    return;
+  }
+
+  if (
+    body.filters !== undefined &&
+    (typeof body.filters !== "object" ||
+      body.filters === null ||
+      Array.isArray(body.filters) ||
+      !Object.values(body.filters).every(
+        (value) =>
+          typeof value === "string" ||
+          typeof value === "number" ||
+          typeof value === "boolean",
+      ))
+  ) {
+    res.status(400).json({
+      success: false,
+      error: "filters must be an object with primitive values",
+    });
+    return;
+  }
+
+  const filters = (body.filters ?? {}) as Record<
+    string,
+    string | number | boolean
+  >;
+
+  const task = await createTask(userId, {
+    type: "export",
+    format: "csv",
+    filters,
+  });
+
+  try {
+    const job = await exportQueue.add(
+      "export-tasks",
+      {
+        taskId: task.id,
+        userId,
+        format: "csv",
+        filters,
+      },
+      {
+        attempts: 3,
+        backoff: {
+          type: "exponential",
+          delay: 1000,
+        },
+      },
+    );
+
+    res.status(202).json({
+      success: true,
+      data: {
+        taskId: task.id,
+        jobId: job.id,
+        status: "PENDING",
+      },
+    });
+  } catch (error) {
+    await updateTaskStatus(task.id, userId, "RUNNING");
+    await updateTaskStatus(task.id, userId, "FAILED");
     throw error;
   }
 }

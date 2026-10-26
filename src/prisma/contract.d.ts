@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'b1b49266750a30e0e51b6ea9fbd2150d070ce7005156a24290349e6087636e72'>;
+  StorageHashBase<'d6703e3ea39b9cf13ede53dd30442f500c7ad8aabadc7cd9fc3c94bf3e95862f'>;
 export type ExecutionHash =
   ExecutionHashBase<'a92a75c8cccb6ffdd9df420653331f96ba144b383203d67f0701f840426d416e'>;
 export type ProfileHash =
@@ -248,6 +248,8 @@ export type FieldOutputTypes = {
       readonly attemptNumber: CodecTypes['pg/int4@1']['output'];
       readonly executionTime: CodecTypes['pg/timestamptz-temporal@1']['output'];
       readonly executionDuration: CodecTypes['pg/int4@1']['output'] | null;
+      readonly exportFilePath: CodecTypes['pg/text@1']['output'] | null;
+      readonly exportRowCount: CodecTypes['pg/int4@1']['output'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
     };
     readonly RefreshToken: {
@@ -284,6 +286,8 @@ export type FieldInputTypes = {
       readonly attemptNumber: CodecTypes['pg/int4@1']['input'];
       readonly executionTime: CodecTypes['pg/timestamptz-temporal@1']['input'];
       readonly executionDuration: CodecTypes['pg/int4@1']['input'] | null;
+      readonly exportFilePath: CodecTypes['pg/text@1']['input'] | null;
+      readonly exportRowCount: CodecTypes['pg/int4@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
     };
     readonly RefreshToken: {
@@ -319,6 +323,8 @@ export type StorageColumnTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
       readonly executionDuration: CodecTypes['pg/int4@1']['output'] | null;
       readonly executionTime: CodecTypes['pg/timestamptz-temporal@1']['output'];
+      readonly exportFilePath: CodecTypes['pg/text@1']['output'] | null;
+      readonly exportRowCount: CodecTypes['pg/int4@1']['output'] | null;
       readonly id: CodecTypes['pg/uuid@1']['output'];
       readonly taskId: CodecTypes['pg/uuid@1']['output'];
     };
@@ -355,6 +361,8 @@ export type StorageColumnInputTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
       readonly executionDuration: CodecTypes['pg/int4@1']['input'] | null;
       readonly executionTime: CodecTypes['pg/timestamptz-temporal@1']['input'];
+      readonly exportFilePath: CodecTypes['pg/text@1']['input'] | null;
+      readonly exportRowCount: CodecTypes['pg/int4@1']['input'] | null;
       readonly id: CodecTypes['pg/uuid@1']['input'];
       readonly taskId: CodecTypes['pg/uuid@1']['input'];
     };
@@ -424,6 +432,8 @@ export namespace Models {
     attemptNumber: CodecTypes['pg/int4@1']['output'];
     executionTime: CodecTypes['pg/timestamptz-temporal@1']['output'];
     executionDuration: CodecTypes['pg/int4@1']['output'] | null;
+    exportFilePath: CodecTypes['pg/text@1']['output'] | null;
+    exportRowCount: CodecTypes['pg/int4@1']['output'] | null;
     createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
     task: public_Task;
     readonly [RelationKeys]?: 'task';
@@ -480,6 +490,16 @@ type ContractBase = Omit<
                   readonly nullable: false;
                 };
                 readonly executionDuration: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: true;
+                };
+                readonly exportFilePath: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly exportRowCount: {
                   readonly nativeType: 'int4';
                   readonly codecId: 'pg/int4@1';
                   readonly nullable: true;
@@ -750,6 +770,14 @@ type ContractBase = Omit<
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
+              readonly exportFilePath: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly exportRowCount: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
               readonly createdAt: {
                 readonly nullable: false;
                 readonly type: {
@@ -778,6 +806,8 @@ type ContractBase = Omit<
                 readonly attemptNumber: { readonly column: 'attemptNumber' };
                 readonly executionTime: { readonly column: 'executionTime' };
                 readonly executionDuration: { readonly column: 'executionDuration' };
+                readonly exportFilePath: { readonly column: 'exportFilePath' };
+                readonly exportRowCount: { readonly column: 'exportRowCount' };
                 readonly createdAt: { readonly column: 'createdAt' };
               };
             };

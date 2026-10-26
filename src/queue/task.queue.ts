@@ -6,7 +6,16 @@ export interface TaskJobPayload {
   userId: string;
 }
 
+export interface ExportJobPayload extends TaskJobPayload {
+  format: "csv";
+  filters?: Record<string, string | number | boolean>;
+}
+
 export const taskQueue = new Queue<TaskJobPayload>("task-processing", {
+  connection: redisConnection,
+});
+
+export const exportQueue = new Queue<ExportJobPayload>("task-export", {
   connection: redisConnection,
 });
 

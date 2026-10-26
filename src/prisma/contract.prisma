@@ -57,6 +57,8 @@ model JobAuditLog {
   attemptNumber Int
   executionTime DateTime
   executionDuration Int?
+  exportFilePath String?
+  exportRowCount Int?
   createdAt     DateTime @default(now())
 
   task          Task     @relation(fields:[taskId], references:[id])

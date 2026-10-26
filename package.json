@@ -4,7 +4,8 @@
   "description": "A distributed, event-driven task and queue management engine for running heavy background jobs asynchronously.",
   "main": "index.js",
   "scripts": {
-	"worker": "node dist/queue/task.worker.js",
+    "task_worker": "node dist/queue/task.worker.js",
+    "export_worker": "node dist/queue/export.worker.js",
     "dev": "tsc --watch",
     "build": "tsc",
     "start": "node dist/index.js",

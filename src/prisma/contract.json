@@ -91,6 +91,20 @@
                   "kind": "scalar"
                 }
               },
+              "exportFilePath": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "exportRowCount": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
               "id": {
                 "nullable": false,
                 "type": {
@@ -137,6 +151,12 @@
                 },
                 "executionTime": {
                   "column": "executionTime"
+                },
+                "exportFilePath": {
+                  "column": "exportFilePath"
+                },
+                "exportRowCount": {
+                  "column": "exportRowCount"
                 },
                 "id": {
                   "column": "id"
@@ -489,6 +509,16 @@
                   "nativeType": "timestamptz",
                   "nullable": false
                 },
+                "exportFilePath": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "exportRowCount": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": true
+                },
                 "id": {
                   "codecId": "pg/uuid@1",
                   "nativeType": "uuid",
@@ -811,7 +841,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "b1b49266750a30e0e51b6ea9fbd2150d070ce7005156a24290349e6087636e72"
+    "storageHash": "d6703e3ea39b9cf13ede53dd30442f500c7ad8aabadc7cd9fc3c94bf3e95862f"
   },
   "execution": {
     "executionHash": "a92a75c8cccb6ffdd9df420653331f96ba144b383203d67f0701f840426d416e",
