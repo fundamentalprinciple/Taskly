@@ -8,6 +8,10 @@ import { updateTaskStatus } from "../../../modules/tasks/task.service.js";
 import { InvalidTaskTransitionError } from "../../../modules/tasks/task.service.js";
 import { taskQueue } from "../../../queue/task.queue.js";
 import { exportQueue } from "../../../queue/task.queue.js";
+import {
+  getTasksForUser,
+  getDashboardMetadata,
+} from "../../../modules/tasks/task.service.js";
 
 export async function createTaskController(req: Request, res: Response) {
   const userId = (req as AuthenticatedRequest).user.sub;
@@ -212,4 +216,31 @@ export async function exportTasksController(req: Request, res: Response) {
     await updateTaskStatus(task.id, userId, "FAILED");
     throw error;
   }
+}
+
+export async function getTasksController(req: Request, res: Response) {
+  const userId = (req as AuthenticatedRequest).user.sub;
+  const status = req.query.status;
+
+  if (
+    status !== undefined &&
+    !["PENDING", "RUNNING", "COMPLETED", "FAILED"].includes(String(status))
+  ) {
+    res.status(400).json({ error: "Invalid task status" });
+    return;
+  }
+
+  const tasks = await getTasksForUser(
+    userId,
+    status as "PENDING" | "RUNNING" | "COMPLETED" | "FAILED" | undefined,
+  );
+
+  res.json({ success: true, data: tasks });
+}
+
+export async function getDashboardController(req: Request, res: Response) {
+  const userId = (req as AuthenticatedRequest).user.sub;
+  const metadata = await getDashboardMetadata(userId);
+
+  res.json({ success: true, data: metadata });
 }
