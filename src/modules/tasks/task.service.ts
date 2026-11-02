@@ -1,10 +1,15 @@
 import { db } from "../../prisma/db.js";
 import { Temporal } from "temporal-polyfill";
-import { getOrSetCache, deleteCacheKeys } from "../../cache/cache.js";
+import {
+  getOrSetCache,
+  deleteCacheKeys,
+  deleteCachePattern,
+} from "../../cache/cache.js";
 
 type TaskStatus = "PENDING" | "RUNNING" | "COMPLETED" | "FAILED";
 
 const CACHE_TTL = 60;
+const PAGE_SIZE_MAX = 100;
 
 async function invalidateTaskCache(userId: string) {
   await deleteCacheKeys(
@@ -15,6 +20,7 @@ async function invalidateTaskCache(userId: string) {
     `tasks:${userId}:list:FAILED`,
     `tasks:${userId}:dashboard`,
   );
+  await deleteCachePattern(`tasks:${userId}:project:*`);
 }
 
 type JsonValue =
@@ -167,5 +173,75 @@ export async function getDashboardMetadata(userId: string) {
       completed: tasks.filter((task) => task.status === "COMPLETED").length,
       failed: tasks.filter((task) => task.status === "FAILED").length,
     };
+  });
+}
+
+export async function getProjectTasksPage(
+  userId: string,
+  projectId: string,
+  limit: number,
+  cursor?: string,
+) {
+  const pageSize = Math.min(Math.max(limit, 1), PAGE_SIZE_MAX);
+  const cacheKey = `tasks:${userId}:project:${projectId}:page:${pageSize}:${cursor ?? "first"}`;
+
+  return getOrSetCache(cacheKey, CACHE_TTL, async () => {
+    const project = await db.orm.public.Project.first({
+      id: projectId,
+      userId,
+    });
+
+    if (!project) return null;
+
+    let cursorPosition: { createdAt: Temporal.Instant; id: string } | undefined;
+
+    if (cursor) {
+      try {
+        const decoded = JSON.parse(
+          Buffer.from(cursor, "base64url").toString("utf8"),
+        ) as { createdAt?: string; id?: string };
+
+        const createdAt = Temporal.Instant.from(decoded.createdAt ?? "");
+
+        if (
+          typeof decoded.id !== "string" ||
+          !decoded.id ||
+          typeof decoded.createdAt !== "string" ||
+          !decoded.createdAt
+        ) {
+          throw new Error("Invalid cursor");
+        }
+
+        cursorPosition = { createdAt, id: decoded.id };
+      } catch {
+        throw new Error("Invalid cursor");
+      }
+    }
+
+    let query = db.orm.public.Task.where({ userId, projectId }).orderBy([
+      (task) => task.createdAt.desc(),
+      (task) => task.id.desc(),
+    ]);
+
+    if (cursorPosition) {
+      query = query.cursor(cursorPosition);
+    }
+
+    const rows = await query.limit(pageSize + 1).all();
+    const hasMore = rows.length > pageSize;
+    const tasks = rows.slice(0, pageSize);
+    const lastTask = tasks[tasks.length - 1];
+
+    const nextCursor =
+      hasMore && lastTask
+        ? Buffer.from(
+            JSON.stringify({
+              createdAt: lastTask.createdAt,
+              id: lastTask.id,
+            }),
+          ).toString("base64url")
+        : null;
+
+    return { tasks, nextCursor, hasMore };
   });
 }

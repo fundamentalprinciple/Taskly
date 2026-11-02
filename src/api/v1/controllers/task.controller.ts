@@ -11,6 +11,7 @@ import { exportQueue } from "../../../queue/task.queue.js";
 import {
   getTasksForUser,
   getDashboardMetadata,
+  getProjectTasksPage,
 } from "../../../modules/tasks/task.service.js";
 
 export async function createTaskController(req: Request, res: Response) {
@@ -243,4 +244,66 @@ export async function getDashboardController(req: Request, res: Response) {
   const metadata = await getDashboardMetadata(userId);
 
   res.json({ success: true, data: metadata });
+}
+
+export async function getProjectTasksController(req: Request, res: Response) {
+  const userId = (req as AuthenticatedRequest).user.sub;
+  const projectId = req.params.id;
+  const rawLimit = req.query.limit ?? "20";
+  const cursor = req.query.cursor;
+
+  if (typeof projectId !== "string") {
+    res.status(400).json({ error: "Invalid project ID" });
+    return;
+  }
+
+  const limit = Number(rawLimit);
+
+  if (!Number.isInteger(limit) || limit < 1 || limit > 100) {
+    res
+      .status(400)
+      .json({ error: "limit must be an integer between 1 and 100" });
+    return;
+  }
+
+  if (
+    cursor !== undefined &&
+    (typeof cursor !== "string" || cursor.length > 512)
+  ) {
+    res.status(400).json({ error: "Invalid cursor" });
+    return;
+  }
+
+  let result;
+
+  try {
+    result = await getProjectTasksPage(
+      userId,
+      projectId,
+      limit,
+      cursor as string | undefined,
+    );
+  } catch (error) {
+    if (error instanceof Error && error.message === "Invalid cursor") {
+      res.status(400).json({ error: "Invalid cursor" });
+      return;
+    }
+
+    throw error;
+  }
+
+  if (!result) {
+    res.status(404).json({ error: "Project not found" });
+    return;
+  }
+
+  res.json({
+    success: true,
+    data: result.tasks,
+    pagination: {
+      limit,
+      nextCursor: result.nextCursor,
+      hasMore: result.hasMore,
+    },
+  });
 }

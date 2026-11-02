@@ -21,6 +21,7 @@ model User {
 
   refreshTokens RefreshToken[]
   tasks         Task[]
+  projects      Project[]
 }
 
 model RefreshToken {
@@ -36,19 +37,36 @@ model RefreshToken {
   @@index([userId])
 }
 
+model Project {
+  id          Uuid      @id @default(uuid())
+  userId      Uuid
+  name        String
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @default(now())
+
+  user        User      @relation(fields:[userId], references:[id])
+  tasks       Task[]
+
+  @@index([userId])
+}
+
 model Task {
   id        Uuid          @id @default(uuid())
   userId    Uuid
+  projectId Uuid?
   status    TaskStatus    @default(PENDING)
   payload   Jsonb
   createdAt DateTime      @default(now())
   updatedAt DateTime      @default(now())
 
   user      User          @relation(fields:[userId], references:[id])
+  project   Project?      @relation(fields:[projectId], references:[id])
   auditLogs JobAuditLog[]
 
   @@index([userId])
   @@index([status])
+  @@index([userId, projectId, createdAt, id])
 }
 
 model JobAuditLog {

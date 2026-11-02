@@ -40,3 +40,27 @@ export async function deleteCacheKeys(...keys: string[]): Promise<void> {
     // Cache invalidation failures must not affect API availability.
   }
 }
+
+export async function deleteCachePattern(pattern: string): Promise<void> {
+  try {
+    let cursor = "0";
+
+    do {
+      const [nextCursor, keys] = await cacheRedis.scan(
+        cursor,
+        "MATCH",
+        pattern,
+        "COUNT",
+        100,
+      );
+
+      cursor = nextCursor;
+
+      if (keys.length > 0) {
+        await cacheRedis.del(...keys);
+      }
+    } while (cursor !== "0");
+  } catch {
+    // Cache invalidation failures must not affect API availability.
+  }
+}

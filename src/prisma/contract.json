@@ -8,6 +8,10 @@
       "model": "JobAuditLog",
       "namespace": "public"
     },
+    "project": {
+      "model": "Project",
+      "namespace": "public"
+    },
     "refreshToken": {
       "model": "RefreshToken",
       "namespace": "public"
@@ -169,6 +173,109 @@
               "table": "jobAuditLog"
             }
           },
+          "Project": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              },
+              "description": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "name": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              },
+              "userId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "tasks": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "projectId"
+                  ]
+                },
+                "to": {
+                  "model": "Task",
+                  "namespace": "public"
+                }
+              },
+              "user": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "userId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "description": {
+                  "column": "description"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "name": {
+                  "column": "name"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                },
+                "userId": {
+                  "column": "userId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "project"
+            }
+          },
           "RefreshToken": {
             "fields": {
               "createdAt": {
@@ -280,6 +387,13 @@
                   "kind": "scalar"
                 }
               },
+              "projectId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
               "status": {
                 "nullable": false,
                 "type": {
@@ -324,6 +438,22 @@
                   "namespace": "public"
                 }
               },
+              "project": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "projectId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Project",
+                  "namespace": "public"
+                }
+              },
               "user": {
                 "cardinality": "N:1",
                 "nullable": false,
@@ -351,6 +481,9 @@
                 },
                 "payload": {
                   "column": "payload"
+                },
+                "projectId": {
+                  "column": "projectId"
                 },
                 "status": {
                   "column": "status"
@@ -418,6 +551,21 @@
               }
             },
             "relations": {
+              "projects": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "userId"
+                  ]
+                },
+                "to": {
+                  "model": "Project",
+                  "namespace": "public"
+                }
+              },
               "refreshTokens": {
                 "cardinality": "1:N",
                 "on": {
@@ -565,6 +713,82 @@
               },
               "uniques": []
             },
+            "project": {
+              "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "description": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "id": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "name": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "userId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "source": {
+                    "columns": [
+                      "userId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "project"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "user"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "userId"
+                  ],
+                  "name": "project_userId_idx_a489d58a",
+                  "prefix": "project_userId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
             "refreshToken": {
               "columns": {
                 "createdAt": {
@@ -671,6 +895,11 @@
                   "nativeType": "jsonb",
                   "nullable": false
                 },
+                "projectId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": true
+                },
                 "status": {
                   "codecId": "pg/text@1",
                   "default": {
@@ -717,9 +946,33 @@
                     "namespaceId": "public",
                     "tableName": "user"
                   }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "projectId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "task"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "project"
+                  }
                 }
               ],
               "indexes": [
+                {
+                  "columns": [
+                    "projectId"
+                  ],
+                  "name": "task_projectId_idx_a96e4d92",
+                  "prefix": "task_projectId_idx",
+                  "unique": false
+                },
                 {
                   "columns": [
                     "status"
@@ -734,6 +987,17 @@
                   ],
                   "name": "task_userId_idx_a489d58a",
                   "prefix": "task_userId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "userId",
+                    "projectId",
+                    "createdAt",
+                    "id"
+                  ],
+                  "name": "task_userId_projectId_createdAt_id_idx_88cf0d97",
+                  "prefix": "task_userId_projectId_createdAt_id_idx",
                   "unique": false
                 }
               ],
@@ -841,10 +1105,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "d6703e3ea39b9cf13ede53dd30442f500c7ad8aabadc7cd9fc3c94bf3e95862f"
+    "storageHash": "d9b750269af850bc573dc2fa66e5f19a5a6b4eec0510aface3a8bbd33249e358"
   },
   "execution": {
-    "executionHash": "a92a75c8cccb6ffdd9df420653331f96ba144b383203d67f0701f840426d416e",
+    "executionHash": "dbdcae97b5244cc68d808216fba50ae88929596efbbbec554ddf06df2610ccfa",
     "mutations": {
       "defaults": [
         {
@@ -856,6 +1120,17 @@
             "column": "id",
             "namespace": "public",
             "table": "jobAuditLog"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "project"
           }
         },
         {

@@ -9,12 +9,14 @@ import {
   exportTasksController,
   getTasksController,
   getDashboardController,
+  getProjectTasksController,
 } from "./controllers/task.controller.js";
 
 const router = Router();
 
 router.post("/tasks", authenticate, createTaskController);
 router.get("/tasks", authenticate, getTasksController);
+router.get("/projects/:id/tasks", authenticate, getProjectTasksController);
 router.get("/dashboard", authenticate, getDashboardController);
 router.post("/tasks/export", authenticate, exportTasksController);
 router.get("/tasks/:id", authenticate, getTaskController);

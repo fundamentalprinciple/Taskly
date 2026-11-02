@@ -34,9 +34,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'d6703e3ea39b9cf13ede53dd30442f500c7ad8aabadc7cd9fc3c94bf3e95862f'>;
+  StorageHashBase<'d9b750269af850bc573dc2fa66e5f19a5a6b4eec0510aface3a8bbd33249e358'>;
 export type ExecutionHash =
-  ExecutionHashBase<'a92a75c8cccb6ffdd9df420653331f96ba144b383203d67f0701f840426d416e'>;
+  ExecutionHashBase<'dbdcae97b5244cc68d808216fba50ae88929596efbbbec554ddf06df2610ccfa'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -252,6 +252,14 @@ export type FieldOutputTypes = {
       readonly exportRowCount: CodecTypes['pg/int4@1']['output'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
     };
+    readonly Project: {
+      readonly id: CodecTypes['pg/uuid@1']['output'];
+      readonly userId: CodecTypes['pg/uuid@1']['output'];
+      readonly name: CodecTypes['pg/text@1']['output'];
+      readonly description: CodecTypes['pg/text@1']['output'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+    };
     readonly RefreshToken: {
       readonly id: CodecTypes['pg/uuid@1']['output'];
       readonly tokenHash: CodecTypes['pg/text@1']['output'];
@@ -263,6 +271,7 @@ export type FieldOutputTypes = {
     readonly Task: {
       readonly id: CodecTypes['pg/uuid@1']['output'];
       readonly userId: CodecTypes['pg/uuid@1']['output'];
+      readonly projectId: CodecTypes['pg/uuid@1']['output'] | null;
       readonly status: 'PENDING' | 'RUNNING' | 'COMPLETED' | 'FAILED';
       readonly payload: CodecTypes['pg/jsonb@1']['output'];
       readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
@@ -290,6 +299,14 @@ export type FieldInputTypes = {
       readonly exportRowCount: CodecTypes['pg/int4@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
     };
+    readonly Project: {
+      readonly id: CodecTypes['pg/uuid@1']['input'];
+      readonly userId: CodecTypes['pg/uuid@1']['input'];
+      readonly name: CodecTypes['pg/text@1']['input'];
+      readonly description: CodecTypes['pg/text@1']['input'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
+    };
     readonly RefreshToken: {
       readonly id: CodecTypes['pg/uuid@1']['input'];
       readonly tokenHash: CodecTypes['pg/text@1']['input'];
@@ -301,6 +318,7 @@ export type FieldInputTypes = {
     readonly Task: {
       readonly id: CodecTypes['pg/uuid@1']['input'];
       readonly userId: CodecTypes['pg/uuid@1']['input'];
+      readonly projectId: CodecTypes['pg/uuid@1']['input'] | null;
       readonly status: 'PENDING' | 'RUNNING' | 'COMPLETED' | 'FAILED';
       readonly payload: CodecTypes['pg/jsonb@1']['input'];
       readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
@@ -328,6 +346,14 @@ export type StorageColumnTypes = {
       readonly id: CodecTypes['pg/uuid@1']['output'];
       readonly taskId: CodecTypes['pg/uuid@1']['output'];
     };
+    readonly project: {
+      readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+      readonly description: CodecTypes['pg/text@1']['output'] | null;
+      readonly id: CodecTypes['pg/uuid@1']['output'];
+      readonly name: CodecTypes['pg/text@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+      readonly userId: CodecTypes['pg/uuid@1']['output'];
+    };
     readonly refreshToken: {
       readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
       readonly expiresAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
@@ -340,6 +366,7 @@ export type StorageColumnTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
       readonly id: CodecTypes['pg/uuid@1']['output'];
       readonly payload: CodecTypes['pg/jsonb@1']['output'];
+      readonly projectId: CodecTypes['pg/uuid@1']['output'] | null;
       readonly status: 'PENDING' | 'RUNNING' | 'COMPLETED' | 'FAILED';
       readonly updatedAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
       readonly userId: CodecTypes['pg/uuid@1']['output'];
@@ -366,6 +393,14 @@ export type StorageColumnInputTypes = {
       readonly id: CodecTypes['pg/uuid@1']['input'];
       readonly taskId: CodecTypes['pg/uuid@1']['input'];
     };
+    readonly project: {
+      readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
+      readonly description: CodecTypes['pg/text@1']['input'] | null;
+      readonly id: CodecTypes['pg/uuid@1']['input'];
+      readonly name: CodecTypes['pg/text@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
+      readonly userId: CodecTypes['pg/uuid@1']['input'];
+    };
     readonly refreshToken: {
       readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
       readonly expiresAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
@@ -378,6 +413,7 @@ export type StorageColumnInputTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
       readonly id: CodecTypes['pg/uuid@1']['input'];
       readonly payload: CodecTypes['pg/jsonb@1']['input'];
+      readonly projectId: CodecTypes['pg/uuid@1']['input'] | null;
       readonly status: 'PENDING' | 'RUNNING' | 'COMPLETED' | 'FAILED';
       readonly updatedAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
       readonly userId: CodecTypes['pg/uuid@1']['input'];
@@ -401,9 +437,10 @@ export namespace Models {
     role: 'ADMIN' | 'MEMBER';
     createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
     updatedAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+    projects: public_Project[];
     refreshTokens: public_RefreshToken[];
     tasks: public_Task[];
-    readonly [RelationKeys]?: 'refreshTokens' | 'tasks';
+    readonly [RelationKeys]?: 'projects' | 'refreshTokens' | 'tasks';
   };
   export type public_RefreshToken = {
     id: CodecTypes['pg/uuid@1']['output'];
@@ -415,16 +452,29 @@ export namespace Models {
     user: public_User;
     readonly [RelationKeys]?: 'user';
   };
+  export type public_Project = {
+    id: CodecTypes['pg/uuid@1']['output'];
+    userId: CodecTypes['pg/uuid@1']['output'];
+    name: CodecTypes['pg/text@1']['output'];
+    description: CodecTypes['pg/text@1']['output'] | null;
+    createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+    updatedAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+    tasks: public_Task[];
+    user: public_User;
+    readonly [RelationKeys]?: 'tasks' | 'user';
+  };
   export type public_Task = {
     id: CodecTypes['pg/uuid@1']['output'];
     userId: CodecTypes['pg/uuid@1']['output'];
+    projectId: CodecTypes['pg/uuid@1']['output'] | null;
     status: 'PENDING' | 'RUNNING' | 'COMPLETED' | 'FAILED';
     payload: CodecTypes['pg/jsonb@1']['output'];
     createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
     updatedAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
     auditLogs: public_JobAuditLog[];
+    project: public_Project | null;
     user: public_User;
-    readonly [RelationKeys]?: 'auditLogs' | 'user';
+    readonly [RelationKeys]?: 'auditLogs' | 'project' | 'user';
   };
   export type public_JobAuditLog = {
     id: CodecTypes['pg/uuid@1']['output'];
@@ -444,6 +494,7 @@ export declare const models: {
   public: {
     User: Models.public_User;
     RefreshToken: Models.public_RefreshToken;
+    Project: Models.public_Project;
     Task: Models.public_Task;
     JobAuditLog: Models.public_JobAuditLog;
   };
@@ -536,6 +587,66 @@ type ContractBase = Omit<
                 },
               ];
             };
+            readonly project: {
+              columns: {
+                readonly id: {
+                  readonly nativeType: 'uuid';
+                  readonly codecId: 'pg/uuid@1';
+                  readonly nullable: false;
+                };
+                readonly userId: {
+                  readonly nativeType: 'uuid';
+                  readonly codecId: 'pg/uuid@1';
+                  readonly nullable: false;
+                };
+                readonly name: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly description: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly updatedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'project_userId_idx_a489d58a';
+                  readonly prefix: 'project_userId_idx';
+                  readonly columns: readonly ['userId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'project';
+                    readonly columns: readonly ['userId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'user';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
             readonly refreshToken: {
               columns: {
                 readonly id: {
@@ -607,6 +718,11 @@ type ContractBase = Omit<
                   readonly codecId: 'pg/uuid@1';
                   readonly nullable: false;
                 };
+                readonly projectId: {
+                  readonly nativeType: 'uuid';
+                  readonly codecId: 'pg/uuid@1';
+                  readonly nullable: true;
+                };
                 readonly status: {
                   readonly nativeType: 'text';
                   readonly codecId: 'pg/text@1';
@@ -649,6 +765,18 @@ type ContractBase = Omit<
                   readonly columns: readonly ['status'];
                   readonly unique: false;
                 },
+                {
+                  readonly name: 'task_userId_projectId_createdAt_id_idx_88cf0d97';
+                  readonly prefix: 'task_userId_projectId_createdAt_id_idx';
+                  readonly columns: readonly ['userId', 'projectId', 'createdAt', 'id'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'task_projectId_idx_a96e4d92';
+                  readonly prefix: 'task_projectId_idx';
+                  readonly columns: readonly ['projectId'];
+                  readonly unique: false;
+                },
               ];
               foreignKeys: readonly [
                 {
@@ -660,6 +788,18 @@ type ContractBase = Omit<
                   readonly target: {
                     readonly namespaceId: 'public' & NamespaceId;
                     readonly tableName: 'user';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'task';
+                    readonly columns: readonly ['projectId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'project';
                     readonly columns: readonly ['id'];
                   };
                 },
@@ -735,6 +875,7 @@ type ContractBase = Omit<
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'RefreshToken';
     };
+    readonly project: { readonly namespace: 'public' & NamespaceId; readonly model: 'Project' };
     readonly task: { readonly namespace: 'public' & NamespaceId; readonly model: 'Task' };
     readonly jobAuditLog: {
       readonly namespace: 'public' & NamespaceId;
@@ -812,6 +953,71 @@ type ContractBase = Omit<
               };
             };
           };
+          readonly Project: {
+            readonly fields: {
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/uuid@1' };
+              };
+              readonly userId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/uuid@1' };
+              };
+              readonly name: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly description: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
+                };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
+                };
+              };
+            };
+            readonly relations: {
+              readonly tasks: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'Task' };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['projectId'];
+                };
+              };
+              readonly user: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['userId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'project';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly id: { readonly column: 'id' };
+                readonly userId: { readonly column: 'userId' };
+                readonly name: { readonly column: 'name' };
+                readonly description: { readonly column: 'description' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
           readonly RefreshToken: {
             readonly fields: {
               readonly id: {
@@ -882,6 +1088,10 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/uuid@1' };
               };
+              readonly projectId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/uuid@1' };
+              };
               readonly status: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -917,6 +1127,18 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['taskId'];
                 };
               };
+              readonly project: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Project';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['projectId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
               readonly user: {
                 readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
                 readonly cardinality: 'N:1';
@@ -933,6 +1155,7 @@ type ContractBase = Omit<
               readonly fields: {
                 readonly id: { readonly column: 'id' };
                 readonly userId: { readonly column: 'userId' };
+                readonly projectId: { readonly column: 'projectId' };
                 readonly status: { readonly column: 'status' };
                 readonly payload: { readonly column: 'payload' };
                 readonly createdAt: { readonly column: 'createdAt' };
@@ -974,6 +1197,17 @@ type ContractBase = Omit<
               };
             };
             readonly relations: {
+              readonly projects: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Project';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['userId'];
+                };
+              };
               readonly refreshTokens: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -1056,6 +1290,14 @@ type ContractBase = Omit<
           readonly ref: {
             readonly namespace: 'public';
             readonly table: 'jobAuditLog';
+            readonly column: 'id';
+          };
+          readonly onCreate: { readonly kind: 'generator'; readonly id: 'uuidv4' };
+        },
+        {
+          readonly ref: {
+            readonly namespace: 'public';
+            readonly table: 'project';
             readonly column: 'id';
           };
           readonly onCreate: { readonly kind: 'generator'; readonly id: 'uuidv4' };
