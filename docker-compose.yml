@@ -1,4 +1,67 @@
 services:
+  api:
+    build: .
+    container_name: taskly-api
+    restart: unless-stopped
+    command: npm start
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://taskly:taskly@postgres:5432/taskly
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  websocket:
+    build: .
+    container_name: taskly-websocket
+    restart: unless-stopped
+    command: npm run websocket
+    env_file: .env
+    environment:
+      WS_PORT: 3001
+      FRONTEND_ORIGIN: http://localhost:5173
+    ports:
+      - "3001:3001"
+
+  task-worker:
+    build: .
+    container_name: taskly-task-worker
+    restart: unless-stopped
+    command: npm run task_worker
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://taskly:taskly@postgres:5432/taskly
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  export-worker:
+    build: .
+    container_name: taskly-export-worker
+    restart: unless-stopped
+    command: npm run export_worker
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://taskly:taskly@postgres:5432/taskly
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
   postgres:
     image: postgres:17
     container_name: taskly-postgres

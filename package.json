@@ -11,7 +11,9 @@
     "start": "node dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "postinstall": "prisma skills sync || exit 0",
-    "contract:emit": "prisma contract emit"
+    "contract:emit": "prisma contract emit",
+    "websocket": "node dist/websocket/server.js",
+    "websocket:dev": "tsx watch src/websocket/server.ts"
   },
   "repository": {
     "type": "git",
@@ -44,6 +46,8 @@
     "express": "^5.2.1",
     "ioredis": "^6.0.0",
     "jsonwebtoken": "^9.0.3",
+    "socket.io": "^4.8.4",
+    "socket.io-client": "^4.8.4",
     "temporal-polyfill": "^1.0.5"
   }
 }
