@@ -1,6 +1,31 @@
+async function updateTaskStatusAndPublish(
+  taskId: string,
+  userId: string,
+  status: "RUNNING" | "COMPLETED" | "FAILED",
+) {
+  const task = await updateTaskStatus(taskId, userId, status);
+
+  if (!task) return;
+
+  try {
+    await publishTaskStatus({
+      type: "task.status.updated",
+      userId,
+      payload: {
+        taskId,
+        status,
+        updatedAt: task.updatedAt.toString(),
+      },
+    });
+  } catch (error) {
+    console.error("Failed to publish task status event:", error);
+  }
+}
+
 import "../temporal-init.js";
 import { Worker } from "bullmq";
 import { redisConnection } from "./connection.js";
+import { publishTaskStatus } from "../websocket/pubsub.js";
 import { processExport } from "./export.processor.js";
 import {
   getTaskById,
@@ -19,7 +44,7 @@ export const exportWorker = new Worker(
     let exportRowCount: number | undefined;
 
     try {
-      await updateTaskStatus(taskId, userId, "RUNNING");
+      await updateTaskStatusAndPublish(taskId, userId, "RUNNING");
 
       const result = await processExport(taskId, userId, filters);
       exportFilePath = result.filePath;
@@ -36,14 +61,14 @@ export const exportWorker = new Worker(
         });
       }
 
-      await updateTaskStatus(taskId, userId, "COMPLETED");
+      await updateTaskStatusAndPublish(taskId, userId, "COMPLETED");
 
       return result;
     } catch (error) {
       const isFinalAttempt = attemptNumber >= (job.opts.attempts ?? 1);
 
       if (isFinalAttempt) {
-        await updateTaskStatus(taskId, userId, "FAILED");
+        await updateTaskStatusAndPublish(taskId, userId, "FAILED");
       }
 
       throw error;

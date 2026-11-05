@@ -1,4 +1,8 @@
 import { createServer } from "node:http";
+import { Redis } from "ioredis";
+import type { RedisOptions } from "ioredis";
+import { redisConnection } from "../queue/connection.js";
+import { TASK_EVENTS_CHANNEL, type TaskStatusEvent } from "./pubsub.js";
 import { Server } from "socket.io";
 import type { Socket } from "socket.io";
 import { verifyAccessToken } from "../modules/auth/token.js";
@@ -10,6 +14,41 @@ import type {
 } from "./events.js";
 
 const PORT = Number(process.env.WS_PORT) || 3001;
+const subscriber = new Redis(redisConnection as RedisOptions);
+
+subscriber.subscribe(TASK_EVENTS_CHANNEL, (error, count) => {
+  if (error) {
+    console.error("Redis subscription failed:", error);
+    return;
+  }
+
+  console.log(`Subscribed to ${TASK_EVENTS_CHANNEL} (${count} channel)`);
+});
+
+subscriber.on("message", (channel, message) => {
+  if (channel !== TASK_EVENTS_CHANNEL) return;
+
+  try {
+    const event = JSON.parse(message) as TaskStatusEvent;
+
+    if (
+      event.type !== "task.status.updated" ||
+      typeof event.userId !== "string" ||
+      typeof event.payload?.taskId !== "string" ||
+      !["PENDING", "RUNNING", "COMPLETED", "FAILED"].includes(
+        event.payload.status,
+      ) ||
+      typeof event.payload.updatedAt !== "string"
+    ) {
+      console.warn("Ignored invalid task event.");
+      return;
+    }
+
+    io.to(`user:${event.userId}`).emit("taskStatusUpdated", event.payload);
+  } catch (error) {
+    console.error("Failed to process Redis event:", error);
+  }
+});
 
 const httpServer = createServer();
 

@@ -27,8 +27,13 @@ services:
     environment:
       WS_PORT: 3001
       FRONTEND_ORIGIN: http://localhost:5173
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     ports:
       - "3001:3001"
+    depends_on:
+      redis:
+        condition: service_healthy
 
   task-worker:
     build: .
